@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.cmfz.dao.PictureDao">
+     <resultMap id="pictureMapper" type="Picture">
+         <id property="pictureId" column="picture_id"></id>
+         <result property="pictureName" column="picture_name"></result>
+         <result property="pictureDescription" column="picture_description"></result>
+         <result property="picturePath" column="picture_path"></result>
+         <result property="pictureStatus" column="picture_status"></result>
+         <result property="pictureTime" column="picture_time"></result>
+     </resultMap>
+    
+    <select id="selectAllPictureByPage" resultMap="pictureMapper">
+        select * from t_picture limit #{start},#{end}
+    </select>
+
+    <select id="selectPictureById" resultMap="pictureMapper">
+        select * from t_picture where
+        picture_id = #{id}
+    </select>
+    <insert id="insertPicture">
+        insert into t_picture
+        values(replace(UUID(),'-',''),#{picture.pictureName},#{picture.pictureDescription},#{picture.picturePath},#{picture.pictureStatus},#{picture.pictureTime})
+    </insert>
+    <update id="updatePicture">
+        update t_picture
+        <set>
+        picture_name = #{picture.pictureName},
+        picture_description = #{picture.pictureDescription},
+        <if test="#{picture.picturePath} != null and #{picture.picturePath} != ''">
+        picture_path = #{picture.picturePath},
+        </if>
+        picture_status = #{picture.pictureStatus},
+        <if test="#{picture.pictureTime} != null">
+        picture_time = #{picture.pictureTime}
+        </if>
+        </set>
+        where picture_id = #{picture.pictureId}
+    </update>
+    <select id="pictureCount" resultType="int">
+        SELECT COUNT(picture_id) from t_picture
+    </select>
+</mapper>

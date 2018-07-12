@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.cmfz.dao.MasterDao">
+    <resultMap id="maseterMapper" type="Master">
+        <id property="masterId" column="master_ID"/>
+        <result property="masterName" column="master_Name"/>
+        <result property="masterPhoto" column="master_Photo"/>
+        <result property="masterSummary" column="master_Summary"/>
+    </resultMap>
+    <select id="selectAllByPage" resultMap="maseterMapper">
+        select * from t_master
+        <if test="start!=null and pageSize!=null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+    <insert id="insertMaster">
+        insert into t_master values(replace(UUID(),'-',''),#{masterName},#{masterPhoto},#{masterSummary})
+    </insert>
+    <select id="countByKey" resultType="int">
+        select count(*) from t_master
+        <if test="key!=null and key!=''">
+            where ${key} like concat('%',#{value},'%')
+        </if>
+    </select>
+
+    <update id="updateMaster">
+        update t_master
+        <set>
+            master_Name = #{masterName},master_Summary = #{masterSummary},
+            <if test="masterPhoto!=null and masterPhoto !=''">
+                master_Photo = #{masterPhoto},
+            </if>
+        </set>
+        where master_ID = #{masterId}
+    </update>
+
+    <select id="selecyMasterByKey" resultMap="maseterMapper">
+        select * from t_master where ${key} like concat('%',#{value},'%') limit #{start},#{pageSize}
+    </select>
+    <insert id="insertMasertList">
+        insert into t_master values
+        <foreach collection="masters" item="m" index="index" separator=",">
+            (
+            replace(UUID(),'-',''),
+            #{m.masterName,jdbcType=VARCHAR},
+            #{m.masterPhoto,jdbcType=VARCHAR},
+            #{m.masterSummary,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+</mapper>

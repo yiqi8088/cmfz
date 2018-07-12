@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--shiro的过滤器工厂， 负责权限的校验-->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="defaultWebSecurityManager"></property>
+        <!--登录页的url-->
+        <property name="loginUrl" value="/login.jsp"></property>
+        <!--未授权的返回界面-->
+        <property name="unauthorizedUrl" value="/login.jsp"></property>
+        <!--过滤器链的定义-->
+        <property name="filterChainDefinitions">
+            <value>
+                /admin/*=anon
+                /js/*=anon
+                /css/*=anon
+                /img/*=anon
+                /image/*=anon
+                /script/*=anon
+                /themes/*=anon
+                /**=user
+            </value>
+        </property>
+    </bean>
+    <!--web环境下的安全管理器-->
+    <bean id="defaultWebSecurityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realms">
+            <!--list的注入-->
+            <list>
+                <ref bean="myRealm"></ref>
+            </list>
+        </property>
+        <!--实现记住我的功能-->
+        <property name="rememberMeManager" ref="rememberMeManager"></property>
+    </bean>
+    <!--声明记住我管理器-->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="simpleCookie"></property>
+    </bean>
+
+    <bean id="simpleCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <property name="name" value="rm"></property>
+        <property name="maxAge" value="604800"></property>
+        <property name="path" value="/"></property>
+    </bean>
+
+    <bean id="myRealm" class="com.baizhi.cmfz.util.MyRealm">
+        <!--声明复杂的匹配器对象-->
+        <property name="credentialsMatcher" ref="hashedCredentialsMatcher"></property>
+    </bean>
+    <bean id="hashedCredentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <!--加密算法的名称-->
+            <property name="hashAlgorithmName" value="md5"></property>
+        <!--加密运算的次数 -->
+            <property name="hashIterations" value="1"></property>
+    </bean>
+</beans>

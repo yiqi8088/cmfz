@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.cmfz.dao.ArticleDao">
+    <resultMap id="articleMapper" type="Article">
+        <id property="articleId" column="article_id"/>
+        <result property="articleTitle" column="article_title"/>
+        <result property="articleIntroduce" column="article_introduce"/>
+        <result property="articleDate" column="article_time"/>
+        <result property="articleStatus" column="article_status"/>
+        <result property="masterId" column="master_Id"/>
+        <association property="master" javaType="com.baizhi.cmfz.entity.Master">
+            <id property="masterId" column="master_Id"></id>
+            <result property="masterName" column="master_Name"/>
+            <result property="masterPhoto" column="master_Photo"/>
+            <result property="masterSummary" column="master_Summary"/>
+        </association>
+    </resultMap>
+    <select id="selectAllArticle" resultMap="articleMapper">
+        SELECT
+        a.article_id article_id,
+        a.article_title article_title,
+        a.article_introduce article_introduce,
+        a.article_time article_time,
+        a.article_status article_status,
+        m.master_ID master_ID,
+        m.master_Name master_Name,
+        m.master_Photo master_Photo,
+        m.master_Summary master_Summary
+        FROM
+        t_article a,
+        t_master m
+        WHERE
+        a.master_id = m.master_ID
+        <if test="start!=null and pageSize!=null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+    <insert id="insertOne">
+        insert into t_article values(replace(UUID(),'-',''),#{articleTitle},#{articleIntroduce},now(),#{articleStatus},#{masterId})
+    </insert>
+    <select id="count" resultType="int">
+        select count(*) from t_article
+    </select>
+</mapper>

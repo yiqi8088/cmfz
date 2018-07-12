@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "../mybatis-3-mapper.dtd" >
+<mapper namespace="com.baizhi.cmfz.dao.AdminDao">
+     <resultMap id="adminMapper" type="Admin">
+         <id property="adminId" column="admin_id"></id>
+         <result property="adminName" column="admin_name"></result>
+         <result property="adminPwd" column="admin_pwd"></result>
+         <result property="adminSalt" column="admin_salt"></result>
+         <result property="adminStatus" column="admin_status"></result>
+     </resultMap>
+    
+    <select id="selectAdminByName" resultMap="adminMapper">
+        select * from admin where
+        admin_name = #{name}
+    </select>
+
+    <select id="selectAdminById" resultMap="adminMapper">
+        select * from admin where
+        admin_id = #{id}
+    </select>
+    <insert id="insertAdmin">
+        insert into admin
+        values(replace(UUID(),'-',''),#{admin.adminName},#{admin.adminPwd},#{admin.adminSalt},#{admin.adminStatus})
+    </insert>
+</mapper>
